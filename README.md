@@ -1,119 +1,78 @@
-# Project Nexus – ProDev Backend Engineering
+# JobBoard Backend (ProDev BE)
 
-Welcome to **Project Nexus**, a documentation hub capturing the key learnings, concepts, tools, and experiences gained throughout the **ALX ProDev Backend Engineering Program**.
+Backend API for a Job Board Platform using Django, DRF, JWT, and PostgreSQL with role-based access control and Swagger docs.
 
-This repository is designed to serve as a **reference guide** for backend development and a **collaboration point** for both backend and frontend learners within the ProDev community.
+## Features
+- Custom user with roles: ADMIN, RECRUITER, USER
+- JWT auth (`/api/auth/token/`, `/api/auth/token/refresh/`)
+- Jobs CRUD, Categories CRUD, Applications
+- RBAC via DRF permissions
+- Filtering, search, ordering on jobs
+- Swagger UI at `/api/docs/`
 
----
-
-## 🚀 Project Objective
-
-- Consolidate major learnings from the ProDev Backend Engineering program.
-- Document backend technologies, concepts, challenges, and practical solutions.
-- Serve as a long-term reference for learners and developers.
-- Promote collaboration between frontend and backend learners.
-
----
-
-## 🧠 Key Learnings
-
-### 🔧 Technologies Covered
-
-- **Python** – Core language for backend logic, scripting, and API development.
-- **Django** – High-level Python web framework for rapid development.
-- **Django REST Framework (DRF)** – Powerful toolkit for building Web APIs.
-- **GraphQL** – Flexible query language for APIs (via Graphene-Django).
-- **Docker** – Containerization for consistent development and deployment environments.
-- **CI/CD** – Continuous Integration and Deployment using GitHub Actions.
-
-### 🧩 Backend Development Concepts
-
-- **Database Design**
-  - Relational DB modeling (PostgreSQL)
-  - Normalization and relationships (OneToOne, ForeignKey, ManyToMany)
-- **Asynchronous Programming**
-  - Async views in Django
-  - Celery + RabbitMQ for background tasks
-- **Caching Strategies**
-  - Redis-based caching
-  - Caching views, queries, and serialized data
-
----
-
-## 🧪 Challenges & Solutions
-
-| Challenge | Solution |
-|----------|----------|
-| Handling long-running tasks | Integrated **Celery** with **RabbitMQ** to offload and monitor background jobs. |
-| API performance issues | Applied **query optimization**, caching, and **pagination** in DRF. |
-| Docker deployment issues | Created multi-stage **Dockerfiles** and used **Docker Compose** for orchestration. |
-| Frontend-backend integration | Used **Postman** and **OpenAPI** docs to test and align API contracts. |
-
----
-
-## ✅ Best Practices & Takeaways
-
-- **Design First**: Start with clear API specifications using tools like Swagger or Postman.
-- **Write Tests**: Always include unit and integration tests to ensure code reliability.
-- **Use Linters & Formatters**: Maintain code quality with `black`, `flake8`, and pre-commit hooks.
-- **Follow Git Workflow**: Use feature branches and meaningful commit messages.
-- **Document Everything**: Maintain detailed docstrings and project documentation.
-
----
-
-## 🤝 Collaboration Hub
-
-Project Nexus emphasizes collaboration with:
-
-### 🧑‍💻 ProDev Backend Learners
-- Share solutions, tools, and system design ideas.
-- Organize code review or debug sessions.
-
-### 🎨 ProDev Frontend Learners
-- Align API requirements.
-- Provide backend support for data consumption and UI testing.
-
-> **Collaboration Channel:** [Discord → #ProDevProjectNexus](https://discord.com)
-
----
-
-## 🗂 Repository Structure
-
-
-alx-project-nexus/
-├── README.md
-├── system-design/
-│   └── diagrams.md
-├── docs/
-│   ├── backend-best-practices.md
-│   ├── challenges-and-solutions.md
-│   └── technologies.md
-└── api-specs/
-└── openapi.yml
-
+## Quickstart (Local)
+1. Create virtualenv and install deps
+```
+python3 -m venv .venv
+. .venv/bin/activate
+pip install -r requirements.txt
+```
+2. Configure Postgres via env (or edit `jobboard/settings.py`)
+```
+export POSTGRES_DB=jobboard
+export POSTGRES_USER=jobboard
+export POSTGRES_PASSWORD=jobboard
+export POSTGRES_HOST=localhost
+export POSTGRES_PORT=5432
+export DJANGO_SECRET_KEY=dev-secret-key
+export DJANGO_DEBUG=1
+```
+3. Run migrations and create superuser
+```
+python manage.py migrate
+python manage.py createsuperuser
+```
+4. Run the server
+```
+python manage.py runserver 0.0.0.0:8000
 ```
 
----
+## API
+- Auth: `POST /api/auth/token/` (username, password) → access/refresh tokens
+- Docs: `GET /api/docs/`
+- Jobs: `GET /api/jobs/`, `POST /api/jobs/`, `GET /api/jobs/{id}/`, `PATCH /api/jobs/{id}/`, `DELETE /api/jobs/{id}/`
+- Categories: `GET /api/jobs/categories/`, `POST /api/jobs/categories/` (ADMIN)
+- Apply: `POST /api/jobs/{id}/apply/` (USER)
+- Applications: `GET /api/jobs/applications/` (own/admin)
 
-## 📅 Timeline
+## Notes
+- Set `AUTH_USER_MODEL = 'accounts.User'`
+- Update DB indexes later for search performance (GIN/pg_trgm).
 
-- **Start Date:** July 21, 2025
-- **Submission Deadline:** July 28, 2025
-
----
-
-## 📜 License
-
+## Docker (recommended)
+1. Ensure Docker is running.
+2. Create a `.env` file (copy from `.env.example`):
 ```
-
-Copyright © 2025 ALX.
-All rights reserved.
-
+DJANGO_SECRET_KEY=dev-secret-key
+DJANGO_DEBUG=1
+DJANGO_ALLOWED_HOSTS=*
+POSTGRES_DB=jobboard
+POSTGRES_USER=jobboard
+POSTGRES_PASSWORD=jobboard
+POSTGRES_HOST=db
+POSTGRES_PORT=5432
+USE_SQLITE=0
 ```
+3. Build and start:
+```
+docker compose up --build
+```
+4. Access:
+- API: http://localhost:8000/
+- Swagger: http://localhost:8000/api/docs/
+- Admin: http://localhost:8000/admin/
 
----
-
-> **Tip**: Be sure to regularly push commits and keep your repo up to date. Collaboration and documentation are evaluated!
+To run with SQLite inside the container, set `USE_SQLITE=1` and remove the `db` dependency, but Postgres is recommended.
 
 ```
 
