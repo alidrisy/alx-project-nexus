@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # Third-party
+    'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
     'drf_spectacular',
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -146,6 +148,22 @@ SIMPLE_JWT = {
 
 # Error page handling
 DEBUG_PROPAGATE_EXCEPTIONS = True
+
+# CSRF and CORS settings
+CSRF_TRUSTED_ORIGINS = [
+    'https://board.alidrisy.com',
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
+]
+
+# CORS settings
+CORS_ALLOWED_ORIGINS = [
+    'https://board.alidrisy.com',
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
+]
+
+CORS_ALLOW_CREDENTIALS = True
 
 # Custom error handlers
 HANDLER404 = 'jobboard.views.handler404'
