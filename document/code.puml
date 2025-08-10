@@ -1,0 +1,57 @@
+@startuml ERD_Diagram
+entity User {
+    + id : int <<PK>>
+    + username : varchar(50)
+    + email : varchar(100)
+    + first_name : varchar(50)
+    + last_name : varchar(50)
+    + password : varchar(255)
+    + role : enum (ADMIN, RECRUITER, USER)
+    + is_active : boolean
+    + is_staff : boolean
+    + is_superuser : boolean
+    + date_joined : datetime
+    + last_login : datetime
+}
+
+entity Category {
+    + id : int <<PK>>
+    + name : varchar(100)
+    + slug : varchar(100)
+}
+
+entity Job {
+    + id : int <<PK>>
+    + title : varchar(100)
+    + description : text
+    + company : varchar(100)
+    + location : varchar(100)
+    + job_type : varchar(50)
+    + category_id : int <<FK>>
+    + posted_by_id : int <<FK>>
+    + created_at : datetime
+    + updated_at : datetime
+}
+
+entity Application {
+    + id : int <<PK>>
+    + job_id : int <<FK>>
+    + candidate_id : int <<FK>>
+    + resume : text
+    + cover_letter : text
+    + created_at : datetime
+}
+
+' Relationships
+User ||--o{ Job : posts
+Category ||--o{ Job : categorizes
+Job ||--o{ Application : receives
+User ||--o{ Application : applies
+
+' Notes
+note right of User : Roles:\nADMIN, RECRUITER, USER
+note right of Application : Unique Constraint:\n(job_id, candidate_id)
+note right of Job : Only RECRUITER/ADMIN can post jobs
+note right of Category : Only ADMIN can manage categories
+
+@enduml
